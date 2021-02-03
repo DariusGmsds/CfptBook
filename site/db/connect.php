@@ -1,8 +1,8 @@
 <?php
 
-function dbConnect(){
+function connect(){
     static $myDb = null;
-    $dbName = "cfptBook";
+    $dbName = "cfptbook";
     $dbUser = "root";
     $dbPass = "";
     if ($myDb === null) {
@@ -20,3 +20,5 @@ function dbConnect(){
     }
     return $myDb;
 }
+
+// alter user 'root'@'localhost' identified with mysql_native_password by 'Super';
