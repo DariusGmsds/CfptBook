@@ -1,75 +1,44 @@
 <?php
 include 'db\func.php';
+session_start();
 $btn = filter_input(INPUT_POST, 'btnPost');
 $comme = filter_input(INPUT_POST, 'commentaire', FILTER_SANITIZE_STRING);
-$date = date('Y-m-d'); 
-$date2 = date("Y-m-d H:i:s");  
-$nameImg = $_FILES["fileImg"]["name"];
-$sizeImg = $_FILES["fileImg"]["size"];
-$typeImg = $_FILES["fileImg"]["type"];
-$tmp_nameImg = $_FILES['fileImg']['tmp_name'];
+// $date = date('Y-m-d'); 
+// $date2 = date("Y-m-d H:i:s");  
+// $nameImg = $_FILES["fileImg"]["name"];
+// $sizeImg = $_FILES["fileImg"]["size"];
+// $typeImg = $_FILES["fileImg"]["type"];
+// $tmp_nameImg = $_FILES['fileImg']['tmp_name'];
 
 
-$target_dir = "imgUpload/";
-$target_file = $target_dir . basename($_FILES["fileImg"]["name"]);
-$uploadOk = 1;
-$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-
-
-
-if($btn == "SendPost")
+ 
+$message = ''; 
+if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
 {
-  
-    // Check if image file is a actual image or fake image
-    if(isset($_POST["submit"])) {
-      $check = getimagesize($_FILES["v"]["tmp_name"]);
-      if($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
-        $uploadOk = 1;
-      } else {
-        echo "File is not an image.";
-        $uploadOk = 0;
-      }
+    $text = filter_input(INPUT_POST,"commentaire",FILTER_SANITIZE_STRING);
+    $last = InsertPost($text,date('Y-m-d'));
+    if(isset($_FILES) && is_array($_FILES) && count($_FILES)>0) {
+        // Raccourci d'écriture pour le tableau reçu
+        $fichiers = $_FILES['fileImg'];
+        // Boucle itérant sur chacun des fichiers
+        for($i=0;$i<count($fichiers['name']);$i++){
+
+        // Action pour avoir un nom unique et ecité les personnes qui upload plusieur fois le meme nom de fichier
+        $nom_fichier = $fichiers['name'][$i];
+        $nomFichierExplode = explode(".", $nom_fichier);
+        $newNomFichier = md5(time() . $nom_fichier);
+        $newNewNomFichier = $newNomFichier . '.' . strtolower(end($nomFichierExplode));
+        
+
+        // Déplacement depuis le répertoire temporaire
+        move_uploaded_file($fichiers['tmp_name'][$i],'uploaded_files/'.$newNewNomFichier);
+        InsertMedia($_FILES["fileImg"]["type"],$newNomFichier,date("Y-m-d"), $last);
+        }
     }
-    
-    // Check if file already exists
-    if (file_exists($target_file)) {
-      echo "Sorry, file already exists.";
-      $uploadOk = 0;
-    }
-    
-    // Check file size
-    if ($_FILES["fileImg"]["size"] > 500000) {
-      echo "Sorry, your file is too large.";
-      $uploadOk = 0;
-    }
-    
-    // Allow certain file formats
-    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-    && $imageFileType != "gif" ) {
-      echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-      $uploadOk = 0;
-    }
-    
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
-      echo "Sorry, your file was not uploaded.";
-    // if everything is ok, try to upload file
-    } else {
-      if (move_uploaded_file($_FILES["fileImg"]["tmp_name"], $target_file)) {
-        echo "The file ". htmlspecialchars( basename( $_FILES["fileImg"]["name"])). " has been uploaded.";
-        InsertMedia($typeImg, $nameImg, $date);
-        InsertComm($comme, $date);
-      } else {
-        echo "Sorry, there was an error uploading your file.";
-      }
-    }
+
+   
 }
-
-
-
-
+$_SESSION['message'] = $message;
 
 
 
