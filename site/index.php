@@ -1,3 +1,11 @@
+<?php
+include 'db\func.php';
+
+
+$posts = getAllPostsOrderByDateDesc();
+
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -30,50 +38,24 @@
                     <h2 class="text-info">Welcome</h2>
                     <p>Bienvenue sur cfptBook la messagerie technique</p>
                 </div>
-                <div class="block-content">
-                    <div class="clean-blog-post">
-                        <div class="row">
-                            <div class="col-lg-5"><img class="rounded img-fluid" src="assets/img/tech/image4.jpg"></div>
-                            <div class="col-lg-7">
-                                <h3>Lorem Ipsum dolor sit amet</h3>
-                                <div class="info"><span class="text-muted">Jan 16, 2018 by&nbsp;<a href="#">John Smith</a></span></div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p><button class="btn btn-outline-primary btn-sm" type="button">Read More</button>
+                <?php
+                foreach ($posts as $index => $post) {
+                ?>
+                    <div class="container p-2">
+                        <div class="card">
+                            <?= displayMedias($post['idPost']) ?>
+                            <div class="card-body">
+                                <p class="card-text"><?= $post['commentaire'] ?></p>
                             </div>
                         </div>
                     </div>
-                    <div class="clean-blog-post">
-                        <div class="row">
-                            <div class="col-lg-5"><img class="rounded img-fluid" src="assets/img/tech/image4.jpg"></div>
-                            <div class="col-lg-7">
-                                <h3>Lorem Ipsum dolor sit amet</h3>
-                                <div class="info"><span class="text-muted">Jan 16, 2018 by&nbsp;<a href="#">John Smith</a></span></div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p><button class="btn btn-outline-primary btn-sm" type="button">Read More</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clean-blog-post">
-                        <div class="row">
-                            <div class="col-lg-5"><img class="rounded img-fluid" src="assets/img/tech/image4.jpg"></div>
-                            <div class="col-lg-7">
-                                <h3>Lorem Ipsum dolor sit amet</h3>
-                                <div class="info"><span class="text-muted">Jan 16, 2018 by&nbsp;<a href="#">John Smith</a></span></div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p><button class="btn btn-outline-primary btn-sm" type="button">Read More</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clean-blog-post">
-                        <div class="row">
-                            <div class="col-lg-5"><img class="rounded img-fluid" src="assets/img/tech/image4.jpg"></div>
-                            <div class="col-lg-7">
-                                <h3>Lorem Ipsum dolor sit amet</h3>
-                                <div class="info"><span class="text-muted">Jan 16, 2018 by&nbsp;<a href="#">John Smith</a></span></div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p><button class="btn btn-outline-primary btn-sm" type="button">Read More</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php 
+                }
+                ?>
             </div>
         </section>
+    
+
     </main>
     <footer class="page-footer dark">
         <div class="container">

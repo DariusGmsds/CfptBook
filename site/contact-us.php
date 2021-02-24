@@ -2,41 +2,88 @@
 include 'db\func.php';
 session_start();
 $btn = filter_input(INPUT_POST, 'btnPost');
-$comme = filter_input(INPUT_POST, 'commentaire', FILTER_SANITIZE_STRING);
-// $date = date('Y-m-d'); 
-// $date2 = date("Y-m-d H:i:s");  
-// $nameImg = $_FILES["fileImg"]["name"];
-// $sizeImg = $_FILES["fileImg"]["size"];
-// $typeImg = $_FILES["fileImg"]["type"];
-// $tmp_nameImg = $_FILES['fileImg']['tmp_name'];
+$typeImg = $_FILES["fileImg"]["type"];
+$nb_files = count($_FILES['fileImg']['name']);
+$MAX_FILE_SIZE = 3145728;    // 3MB in bytes
+$MAX_POST_SIZE = 73400320;  // 70MB in bytes
+$error = "";
+$errorimg = "";
+
+$extensions = array(
+    "image" => array('.png', '.gif', '.jpg', '.jpeg'),
+    "video" => array('.mp4', '.webm'),
+    "audio" => array('.mp3', 'wav', 'ogg')
+);
+// available types of file
+$types = array('image', 'video', 'audio');
 
 
  
 $message = ''; 
 if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
-{
-    $text = filter_input(INPUT_POST,"commentaire",FILTER_SANITIZE_STRING);
-    $last = InsertPost($text,date('Y-m-d'));
-    if(isset($_FILES) && is_array($_FILES) && count($_FILES)>0) {
-        // Raccourci d'écriture pour le tableau reçu
-        $fichiers = $_FILES['fileImg'];
-        // Boucle itérant sur chacun des fichiers
-        for($i=0;$i<count($fichiers['name']);$i++){
-
-        // Action pour avoir un nom unique et ecité les personnes qui upload plusieur fois le meme nom de fichier
-        $nom_fichier = $fichiers['name'][$i];
-        $nomFichierExplode = explode(".", $nom_fichier);
-        $newNomFichier = md5(time() . $nom_fichier);
-        $newNewNomFichier = $newNomFichier . '.' . strtolower(end($nomFichierExplode));
-        
-
-        // Déplacement depuis le répertoire temporaire
-        move_uploaded_file($fichiers['tmp_name'][$i],'uploaded_files/'.$newNewNomFichier);
-        InsertMedia($_FILES["fileImg"]["type"],$newNomFichier,date("Y-m-d"), $last);
+{ 
+    foreach ($_FILES['fileImg']['size'] as $key => $value) {
+        if ($value > $MAX_FILE_SIZE) {
+            $error = 'File too heavy.';
+            connect()->rollback();
+        } else {
+            $size_total += $value;
         }
     }
 
+    $text = filter_input(INPUT_POST,"commentaire",FILTER_SANITIZE_STRING);
    
+    if(isset($_FILES) && is_array($_FILES) && count($_FILES)>0) {
+        for ($i = 0; $i < $nb_files; $i++) {
+            $errorimg = $_FILES['fileImg']["error"][$i];
+            if ($error == 'File too heavy.' || $size_total > $MAX_POST_SIZE) {
+                $error = "Fichier trop volumineux!";
+                connect()->rollback();
+            }
+            else{
+                try{
+                    // Raccourci d'écriture pour le tableau reçu
+                    connect()->beginTransaction();
+                    $last = InsertPost($text,date('Y-m-d'));
+                    connect()->commit();
+
+                    $fichiers = $_FILES['fileImg'];
+                    // Boucle itérant sur chacun des fichiers
+                    for($i=0;$i<count($fichiers['name']);$i++){
+                        // Action pour avoir un nom unique et ecité les personnes qui upload plusieur fois le meme nom de fichier
+                        $nom_fichier = $fichiers['name'][$i];
+
+                        if (substr($nom_fichier, -3) == "png" || substr($nom_fichier, -3) == "jpg" || substr($nom_fichier, -3) == "PNG" || substr($nom_fichier, -3) == "JPG" || substr($nom_fichier, -3) == "peg" || substr($nom_fichier, -3) == "PEG" && $taille > $taille_maxi) {
+                                
+                            $nomFichierExplode = explode(".", $nom_fichier);
+                            $newNomFichier = md5(time() . $nom_fichier);
+                            $newNewNomFichier = $newNomFichier . '.' . strtolower(end($nomFichierExplode));
+                            
+                            // Déplacement depuis le répertoire temporaire 
+                            move_uploaded_file($fichiers['tmp_name'][$i],'uploaded_files/'.$newNewNomFichier);
+                            connect()->beginTransaction();       
+                            InsertMedia($typeImg[$i],$newNewNomFichier,date("Y-m-d"), $last);
+                            connect()->commit();
+                            if (empty($error)) {
+                                $msg = '<div class="alert alert-success" role="alert">Upload effectué avec succès!</div>';
+                            } else {
+                                $msg = '<div class="alert alert-danger" role="alert">' . $error . '</div>';
+                            }
+                        }
+                        else {
+                            // Sinon le média n'est pas accepter
+                            echo "le média n'est pas accepté.";
+                        }
+                    }
+                }catch(Exception $e)
+                {
+                    connect()-> rollBack();
+                }  
+            }
+        } 
+    }  
+    header('Location: index.php');
+    exit;
 }
 $_SESSION['message'] = $message;
 
@@ -58,7 +105,7 @@ $_SESSION['message'] = $message;
 </head>
 
 <body>
-    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
         <div class="container"><img class="rounded-circle bg-white border rounded-pill border-dark shadow" data-bs-hover-animate="pulse" src="assets/img/tech/livre.jpg" width="30%" style="margin-right: 10px;"><a class="navbar-brand logo" href="#">CFPTBook</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="nav navbar-nav ml-auto">
@@ -74,7 +121,8 @@ $_SESSION['message'] = $message;
                 <div class="block-heading"></div>
                 <form method="POST" action="#" enctype="multipart/form-data">
                     <div class="form-group"><label>Message</label><textarea class="form-control" name="commentaire"></textarea></div>
-                    <div class="form-group"><input type="file" accept="image/png, image/jpeg" multiple="" name="fileImg[]"></div> 
+                    <div class="form-group"> <input type="file" name="fileImg[]" accept=".jpg, .jpeg, .png, .mp4, .mp3, .wav, .gif" multiple /></div> 
+                   
                     
                     <div class="form-group"><button class="btn btn-primary btn-block" type="submit" name="btnPost" value="SendPost" >Send</button></div>
                 </form>
