@@ -1,8 +1,25 @@
 <?php
 include 'db\func.php';
 
+$btnDelete = filter_input(INPUT_POST, 'btnDelete');
+$btnEdite = filter_input(INPUT_POST, 'btnEdite');
+$txt = "";
 
 $posts = getAllPostsOrderByDateDesc();
+
+//echo("boutton pressed");
+
+if ($btnDelete == 'deletePost') {
+  $txt = "boutton delete pressed";
+  echo($txt);
+    //DeleteById_post($id);
+}
+
+if ($btnEdite == 'editPost') {
+   $txt = "boutton edite pressed";
+   echo($txt);
+    //DeleteById_post($id);
+}
 
 
 ?>
@@ -34,6 +51,16 @@ $posts = getAllPostsOrderByDateDesc();
                 ?>
                     <div class="container p-2">
                         <div class="card">
+                            <form method="POST" action="#">
+                                <table class="table table-dark">
+                                    <thead>
+                                        <tr>
+                                        <th scope="col"> <button class="btn btn-danger mb-2" type="submit" name="btnDelete" value="deletePost"> Supprimer </button></th>
+                                        <th scope="col"> <button class="btn btn-info" type="submit" name="btnEdite" value="editPost"> Editer </button></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </form>
                             <?= displayMedias($post['idPost']) ?>
                             <div class="card-body">
                                 <p class="card-text"><?= $post['commentaire'] ?></p>

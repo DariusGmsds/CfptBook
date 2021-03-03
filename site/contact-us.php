@@ -1,23 +1,17 @@
 <?php
 include 'db\func.php';
-session_start();
 $btn = filter_input(INPUT_POST, 'btnPost');
-$typeImg = $_FILES["fileImg"]["type"];
-$nb_files = count($_FILES['fileImg']['name']);
+if (isset($_FILES["fileImg"])) {
+    $typeImg = $_FILES["fileImg"]["type"];
+    $nb_files = count($_FILES['fileImg']['name']);
+}
 $MAX_FILE_SIZE = 3145728;    // 3MB in bytes
 $MAX_POST_SIZE = 73400320;  // 70MB in bytes
 $error = "";
 $errorimg = "";
+$size_total = 0;
 
-$extensions = array(
-    "image" => array('.png', '.gif', '.jpg', '.jpeg'),
-    "video" => array('.mp4', '.webm'),
-    "audio" => array('.mp3', 'wav', 'ogg')
-);
-// available types of file
-$types = array('image', 'video', 'audio');
-
-
+//define('ACCEPTED_TYPES', ["image/png", "image/jpg", "image/jpeg", "video/mp4", "video/webm", "video/ogg", "audio/mp3", "audio/mpeg", "audio/wav"]);
  
 $message = ''; 
 if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
@@ -36,6 +30,7 @@ if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
     if(isset($_FILES) && is_array($_FILES) && count($_FILES)>0) {
         for ($i = 0; $i < $nb_files; $i++) {
             $errorimg = $_FILES['fileImg']["error"][$i];
+            $fileType = $_FILES['fileImg']['type'][$i];       
             if ($error == 'File too heavy.' || $size_total > $MAX_POST_SIZE) {
                 $error = "Fichier trop volumineux!";
                 connect()->rollback();
@@ -52,9 +47,11 @@ if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
                     for($i=0;$i<count($fichiers['name']);$i++){
                         // Action pour avoir un nom unique et ecité les personnes qui upload plusieur fois le meme nom de fichier
                         $nom_fichier = $fichiers['name'][$i];
-
-                        if (substr($nom_fichier, -3) == "png" || substr($nom_fichier, -3) == "jpg" || substr($nom_fichier, -3) == "PNG" || substr($nom_fichier, -3) == "JPG" || substr($nom_fichier, -3) == "peg" || substr($nom_fichier, -3) == "PEG" && $taille > $taille_maxi) {
-                                
+                       // if (in_array($fileType, ACCEPTED_TYPES)) {
+                        if (substr($nom_fichier, -3) == "png" || substr($nom_fichier, -3) == "jpg" || substr($nom_fichier, -3) == "PNG" || substr($nom_fichier, -3) == "JPG" || substr($nom_fichier, -3) == "peg" 
+                        || substr($nom_fichier, -3) == "PEG" || substr($nom_fichier, -3) == "mp4" || substr($nom_fichier, -3) == "MP4" || substr($nom_fichier, -3) == "mp3" || substr($nom_fichier, -3) == "MP3" 
+                        || substr($nom_fichier, -3) == "waw" ||  substr($nom_fichier, -3) == "WAW" || substr($nom_fichier, -3) == "ogg"|| substr($nom_fichier, -3) == "OGG"||  substr($nom_fichier, -3) == "webm" 
+                        || substr($nom_fichier, -3) == "WEBM" && $taille > $taille_maxi) {  
                             $nomFichierExplode = explode(".", $nom_fichier);
                             $newNomFichier = md5(time() . $nom_fichier);
                             $newNewNomFichier = $newNomFichier . '.' . strtolower(end($nomFichierExplode));
@@ -64,11 +61,6 @@ if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
                             connect()->beginTransaction();       
                             InsertMedia($typeImg[$i],$newNewNomFichier,date("Y-m-d"), $last);
                             connect()->commit();
-                            if (empty($error)) {
-                                $msg = '<div class="alert alert-success" role="alert">Upload effectué avec succès!</div>';
-                            } else {
-                                $msg = '<div class="alert alert-danger" role="alert">' . $error . '</div>';
-                            }
                         }
                         else {
                             // Sinon le média n'est pas accepter
@@ -85,10 +77,6 @@ if (isset($_POST['btnPost']) && $_POST['btnPost'] == 'SendPost')
     header('Location: index.php');
     exit;
 }
-$_SESSION['message'] = $message;
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -112,7 +100,7 @@ $_SESSION['message'] = $message;
                 <div class="block-heading"></div>
                 <form method="POST" action="#" enctype="multipart/form-data">
                     <div class="form-group"><label>Message</label><textarea class="form-control" name="commentaire"></textarea></div>
-                    <div class="form-group"> <input type="file" name="fileImg[]" accept=".jpg, .jpeg, .png, .mp4, .mp3, .wav, .gif" multiple /></div> 
+                    <div class="form-group"> <input type="file" name="fileImg[]" accept=".jpg, .jpeg, .png, .mp4, .mp3, .wav, .gif .mp4 .webm .ogg" multiple /></div> 
                    
                     
                     <div class="form-group"><button class="btn btn-primary btn-block" type="submit" name="btnPost" value="SendPost" >Send</button></div>
