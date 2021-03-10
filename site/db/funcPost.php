@@ -67,7 +67,8 @@ function getNumberOfMediaForPost($idPost)
     $query = $connexion->prepare(
         "SELECT count(*) as 'count'
         FROM `media` as m
-        WHERE `m`.`idPost` = :idPost");
+        WHERE `m`.`idPost` = :idPost
+        ORDER BY `typeMedia` DESC");
     $query->bindParam('idPost', $idPost, PDO::PARAM_INT, 11);
     $query->execute();
     $query = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -75,6 +76,23 @@ function getNumberOfMediaForPost($idPost)
 
     return $query;
 }
+
+function getNumberOfImagesOrVideosForPost($idPost)
+{
+    $connexion = connect();
+    $query = $connexion->prepare(
+        "SELECT count(*) as 'count'
+        FROM `media` as m
+        WHERE `m`.`idPost` = :idPost
+        AND (`m`.`typeMedia` LIKE 'video%' OR `m`.`typeMedia` LIKE 'image%')");
+    $query->bindParam('idPost', $idPost, PDO::PARAM_INT, 11);
+    $query->execute();
+    $query = $query->fetchAll(PDO::FETCH_ASSOC);
+    $query = $query[0]['count'];
+
+    return $query;
+}
+
 
 function getAllMediasFormPost($idPost)
 {

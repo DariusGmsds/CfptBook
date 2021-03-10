@@ -12,7 +12,7 @@ include 'db\funcMedia.php';
 function displayMedias($idPost)
 {
     $output = "";
-
+   
     // Si le post contient aumoin  un média
     if (getNumberOfMediaForPost($idPost) > 0) {   
         $medias = getAllMediasFormPost($idPost);
@@ -29,13 +29,12 @@ function displayMedias($idPost)
             foreach ($medias as $index => $media) {
                 $main = ($index == 0) ? ' active' : '';
                 $output .= "<div class=\"carousel-item $main\">";
-                if (substr($media["typeMedia"], 0, 5) == "video") {
-               
-                     $output .= "<video class=\"card-img-top w-100\" controls autoplay muted loop>  <source src=\"uploaded_files/" . $media['nomMedia']. "\"></video>";   
-                }else if(substr($media["typeMedia"], 0, 5) == "audio"){
-                    $output .= "<audio controls> <source src=\"uploaded_files/" . $media['nomMedia']. "\"></audio>";
+                 if(substr($media["typeMedia"], 0, 5) == "audio"){
+                    $output .= "<audio controls class=\"card-img-top w-100\"> <source src=\"uploaded_files/" . $medias[0]['nomMedia']. "\"></audio>";
+                }else if (substr($media["typeMedia"], 0, 5) == "video") {
+                     $output .= "<video preload=\"metadata\" class=\"card-img-top w-100\" controls autoplay muted loop>  <source src=\"uploaded_files/" . $media['nomMedia']. "\"></video>";   
                 }else{
-                    $output .= "<img class=\"card-img-top w-100\" src=\"uploaded_files/" . $media['nomMedia'] . "\" alt=\"" . $media['nomMedia'] . "\">";
+                    $output .= "<img preload=\"metadata\" class=\"card-img-top w-100\" src=\"uploaded_files/" . $media['nomMedia'] . "\" alt=\"" . $media['nomMedia'] . "\">";
                 }
               
                 $output .= "</div>";
@@ -50,6 +49,7 @@ function displayMedias($idPost)
             $output .= "<span class=\"sr-only\">Next</span>";
             $output .= "</a>";
             $output .= "</div>";
+
         }
         // Il n'y a qu'un seul média
         else {
@@ -57,7 +57,7 @@ function displayMedias($idPost)
                
                 $output .= "<video class=\"card-img-top w-100\" controls autoplay muted loop>  <source src=\"uploaded_files/" . $medias[0]['nomMedia']. "\"></video>";   
            }else if(substr($medias[0]["typeMedia"], 0, 5) == "audio"){
-               $output .= "<audio controls> <source src=\"uploaded_files/" . $medias[0]['nomMedia']. "\"></audio>";
+               $output .= "<audio controls class=\"card-img-top w-100\"> <source src=\"uploaded_files/" . $medias[0]['nomMedia']. "\"></audio>";
            }else{
                $output .= "<img class=\"card-img-top w-100\" src=\"uploaded_files/" . $medias[0]['nomMedia'] . "\" alt=\"" . $medias[0]['nomMedia'] . "\">";
            }

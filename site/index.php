@@ -49,7 +49,7 @@ if ($btnEdite == 'editPost') {
                 <?php
                 foreach ($posts as $index => $post) {
                 ?>
-                    <div class="container p-2">
+                    <div class="container p-5">
                         <div class="card">
                             <form method="POST" action="#">
                                 <table class="table table-dark">
