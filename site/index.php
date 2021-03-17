@@ -1,24 +1,34 @@
 <?php
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	Index page
+*/
+
 include 'db\func.php';
 
 $btnDelete = filter_input(INPUT_POST, 'btnDelete');
 $btnEdite = filter_input(INPUT_POST, 'btnEdite');
+$id = filter_input(INPUT_POST, 'id');
 $txt = "";
+
 
 $posts = getAllPostsOrderByDateDesc();
 
-//echo("boutton pressed");
-
 if ($btnDelete == 'deletePost') {
-  $txt = "boutton delete pressed";
-  echo($txt);
-    //DeleteById_post($id);
+
+    foreach (getAllMediasFormPost($id) as $m) {
+        unlink('uploaded_files/'.$m["nomMedia"]);
+    }
+    deletePost($id); 
+    del_media($id);
+    $posts = getAllPostsOrderByDateDesc();
+   
 }
 
 if ($btnEdite == 'editPost') {
-   $txt = "boutton edite pressed";
-   echo($txt);
-    //DeleteById_post($id);
+    header('Location: contact-us.php?id='.$id);
 }
 
 
@@ -57,6 +67,7 @@ if ($btnEdite == 'editPost') {
                                         <tr>
                                         <th scope="col"> <button class="btn btn-danger mb-2" type="submit" name="btnDelete" value="deletePost"> Supprimer </button></th>
                                         <th scope="col"> <button class="btn btn-info" type="submit" name="btnEdite" value="editPost"> Editer </button></th>
+                                        <th scope="col"> <input type="hidden" name="id" value="<?=$post['idPost']?>"></th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -68,7 +79,7 @@ if ($btnEdite == 'editPost') {
                         </div>
                     </div>
                 <?php 
-                }
+                } 
                 ?>
             </div>
         </section>

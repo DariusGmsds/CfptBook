@@ -1,4 +1,11 @@
 <?php
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	fonction sql des medias
+*/
+
 
 
 function InsertMedia($typeMedia, $nomMedia, $creationDate,$lastid)
@@ -13,22 +20,26 @@ function InsertMedia($typeMedia, $nomMedia, $creationDate,$lastid)
     ]);
 }
 
-
-function del_media($idMedia)
+function del_media($idPost)
 {
-    try {
-        $sql = "DELETE FROM `media` WHERE `id` = ':id';";
-        $data = array(':id' => $idMedia);
-        $db =  connect()->getConnection();
-        $db->beginTransaction();
-        $query = $db->prepare($sql);
-        $query->execute($data);
-        $db->commit();
-        return $query->fetchAll();
-    } catch (\Throwable $th) {
-        $th->getMessage();
-        $db->rollBack();
-        return FALSE;
-    }
+    $db = connect();
+    $sql = "DELETE FROM `media` WHERE `media`.`idPost` = :id";
+    $q = $db->prepare($sql);
+    $q->execute([
+        ':id' => $idPost,
+    ]);
 }
 
+function getAllMediasFormPost($idPost)
+{
+    $connexion = connect();
+    $query = $connexion->prepare(
+        "SELECT `m`.`idMedia`, `m`.`nomMedia`, `m`.`typeMedia`, `m`.`creationDate`, `m`.`modificationDate`
+        FROM `media` as m
+        WHERE `m`.`idPost` = :idPost");
+    $query->bindParam('idPost', $idPost, PDO::PARAM_INT, 11);
+    $query->execute();
+    $query = $query->fetchAll(PDO::FETCH_ASSOC);
+
+    return $query;
+}

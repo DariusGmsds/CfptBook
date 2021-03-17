@@ -1,3 +1,11 @@
+<?php
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	peid de page
+*/
+?>
 <footer class="page-footer dark">
         <div class="container">
             <div class="row">

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	page de connexion a la db
+*/
+
 function connect(){
     static $myDb = null;
     $dbName = "cfptbook";

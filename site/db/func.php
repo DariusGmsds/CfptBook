@@ -1,4 +1,10 @@
 <?php
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	fonction qui créent le carousel
+*/
 
 include 'db\connect.php';
 include 'db\FuncPost.php';

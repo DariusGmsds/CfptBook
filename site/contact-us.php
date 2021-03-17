@@ -1,5 +1,11 @@
 <?php
- include 'includes\traitementFile.php';
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	pge d'upload de nouevaux post
+*/
+ include 'includes\editOrNewPost.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,7 +22,7 @@
 </head>
 
 <body>
-<?php include 'includes\nav.php'; ?>
+<?php //include 'includes\nav.php'; ?>
     <main class="page contact-us-page">
         <section class="clean-block clean-form dark" style="text-align: left;width: 100%;height: 100%;">
             <div class="container">

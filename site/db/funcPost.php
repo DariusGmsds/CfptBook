@@ -1,19 +1,27 @@
 <?php
+/*
+ *	Auteur	:	Gomes Darius
+ *	Class	:	I.DA-P3D
+ *	Date	:	2021/01/28
+ *	Desc.	:	fonction sql des Post
+*/
 
-function updateById_post($id, $comment)
-{
-    try {
-        $date = date(">-m-d H:i:s");
-        $sql = "UPDATE `post` SET `commentaire`=:comment, `dateModification`=:date WHERE `idPost` = :id";
-        $db = connect()->getConnection();
-        $query = $db->prepare($sql);
-        $data = array(":id" => $id, ":date" => $date, ":comment" => $comment);
-        $query->execute($data);
-    } catch (\Throwable $th) {
-        $th->getMessage();
-        return FALSE;
-    }
-    return TRUE;
+
+
+
+function updateEvent($idPost, $commentaire) {
+    $date = date("y-m-d H:i:s");
+    $sql = "UPDATE `post` SET `commentaire` = :commentaire, `modificationDate` = :date 
+    WHERE `idPost` = :idPost";
+         
+
+    $query = connect()->prepare($sql);
+
+    $query->execute([
+        ':idPost' => $idPost,
+        ':commentaire' => $commentaire,
+        ':date' => $date,
+    ]);
 }
 
 function InsertPost($commentaire,$creationDate){
@@ -39,7 +47,7 @@ function deletePost($id){
     $query = connect()->prepare($sql);
 
     $query->execute([
-        ':id' => $$id,
+        ':id' => $id,
     ]);
 
     $latest_id = connect()->lastInsertId();
@@ -94,19 +102,7 @@ function getNumberOfImagesOrVideosForPost($idPost)
 }
 
 
-function getAllMediasFormPost($idPost)
-{
-    $connexion = connect();
-    $query = $connexion->prepare(
-        "SELECT `m`.`idMedia`, `m`.`nomMedia`, `m`.`typeMedia`, `m`.`creationDate`, `m`.`modificationDate`
-        FROM `media` as m
-        WHERE `m`.`idPost` = :idPost");
-    $query->bindParam('idPost', $idPost, PDO::PARAM_INT, 11);
-    $query->execute();
-    $query = $query->fetchAll(PDO::FETCH_ASSOC);
 
-    return $query;
-}
 
 function getAllPostsOrderByDateDesc()
 {
@@ -118,4 +114,13 @@ function getAllPostsOrderByDateDesc()
     $query->execute();
     $query = $query->fetchAll(PDO::FETCH_ASSOC);
     return $query;
+}
+
+
+function getPostByID($idPost){
+    $sql = "SELECT `idPost`, `commentaire`, `creationDate`, `modificationDate` FROM `post` WHERE `idPost` = :idPost";
+    $query = connect()->prepare($sql);
+    $query->execute([
+        ':idPost' => $idPost,
+    ]);
 }
