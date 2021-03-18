@@ -11,26 +11,26 @@ include 'db\func.php';
 $btnDelete = filter_input(INPUT_POST, 'btnDelete');
 $btnEdite = filter_input(INPUT_POST, 'btnEdite');
 $id = filter_input(INPUT_POST, 'id');
-$txt = "";
-
-
 $posts = getAllPostsOrderByDateDesc();
 
 if ($btnDelete == 'deletePost') {
-
-    foreach (getAllMediasFormPost($id) as $m) {
-        unlink('uploaded_files/'.$m["nomMedia"]);
+    try {
+        foreach (getAllMediasFormPost($id) as $m) {
+            unlink('uploaded_files/'.$m["nomMedia"]);
+        }
+        connect()->beginTransaction();
+        deletePost($id); 
+        del_media($id);
+        connect()->commit();
+        $posts = getAllPostsOrderByDateDesc();
+    } catch (\Throwable $th) {
+        connect()->rollBack();
     }
-    deletePost($id); 
-    del_media($id);
-    $posts = getAllPostsOrderByDateDesc();
-   
-}
+} 
 
 if ($btnEdite == 'editPost') {
     header('Location: contact-us.php?id='.$id);
 }
-
 
 ?>
 <!DOCTYPE html>

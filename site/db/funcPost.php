@@ -117,10 +117,13 @@ function getAllPostsOrderByDateDesc()
 }
 
 
-function getPostByID($idPost){
-    $sql = "SELECT `idPost`, `commentaire`, `creationDate`, `modificationDate` FROM `post` WHERE `idPost` = :idPost";
+function getPostCommeByID($idPost){
+    $sql = "SELECT `commentaire` FROM `post` WHERE `idPost` = :idPost";
     $query = connect()->prepare($sql);
-    $query->execute([
+    $query->execute([   
         ':idPost' => $idPost,
     ]);
+    $query = $query->fetchAll(PDO::FETCH_ASSOC);
+    $query = $query[0];
+    return $query;
 }

@@ -3,7 +3,7 @@
  *	Auteur	:	Gomes Darius
  *	Class	:	I.DA-P3D
  *	Date	:	2021/01/28
- *	Desc.	:	pge d'upload de nouevaux post
+ *	Desc.	:	page d'upload de nouevaux post
 */
  include 'includes\editOrNewPost.php';
 ?>
@@ -13,7 +13,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Contact Us - Brand</title>
+    <title>Poster ou modiffier</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
