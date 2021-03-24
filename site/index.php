@@ -6,13 +6,15 @@
  *	Desc.	:	Index page
 */
 
-include 'db\func.php';
+require_once('model\funcDisplay.php');
 
+// récupèration des inputs
 $btnDelete = filter_input(INPUT_POST, 'btnDelete');
 $btnEdite = filter_input(INPUT_POST, 'btnEdite');
 $id = filter_input(INPUT_POST, 'id');
 $posts = getAllPostsOrderByDateDesc();
 
+// suprime le post avec tout les medias assosiés
 if ($btnDelete == 'deletePost') {
     try {
         foreach (getAllMediasFormPost($id) as $m) {
@@ -20,7 +22,7 @@ if ($btnDelete == 'deletePost') {
         }
         connect()->beginTransaction();
         deletePost($id); 
-        del_media($id);
+        del_mediafromPost($id);
         connect()->commit();
         $posts = getAllPostsOrderByDateDesc();
     } catch (\Throwable $th) {
@@ -28,6 +30,7 @@ if ($btnDelete == 'deletePost') {
     }
 } 
 
+// redirige vers la page d'édition de post
 if ($btnEdite == 'editPost') {
     header('Location: contact-us.php?id='.$id);
 }
@@ -48,7 +51,7 @@ if ($btnEdite == 'editPost') {
 </head>
 
 <body>
-    <?php include 'includes\nav.php'; ?>
+    <?php require_once('vue\nav.php'); ?>
     <main class="page blog-post-list">
         <section class="clean-block clean-blog-list dark">
             <div class="container">
@@ -72,7 +75,10 @@ if ($btnEdite == 'editPost') {
                                     </thead>
                                 </table>
                             </form>
-                            <?= displayMedias($post['idPost']) ?>
+                            <?= 
+                            // Fabrique le carouselle
+                            displayMedias($post['idPost'])
+                            ?>
                             <div class="card-body">
                                 <p class="card-text"><?= $post['commentaire'] ?></p>
                             </div>
@@ -86,7 +92,7 @@ if ($btnEdite == 'editPost') {
     
 
     </main>
-    <?php include 'includes\footer.php'; ?>
+    <?php require_once('vue\footer.php'); ?>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/bs-init.js"></script>
