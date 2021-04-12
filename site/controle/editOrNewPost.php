@@ -9,17 +9,8 @@
 // récupère l'id du post
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
+    $ajaxFunction = "editPost(" . $id . ")";
 }else{ 
-    $id = null; 
+    $id = null;
+    $ajaxFunction = "createPost()";
 }
-
-
-
-
-if (!isset($id)) {
-    require_once('controle\traitementFile.php');
-}
-else {
-    require_once('controle\Edit.php');
-}
-

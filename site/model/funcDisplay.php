@@ -7,7 +7,7 @@
 */
 
 require_once('model\connect.php');
-require_once('model\FuncPost.php');
+require_once('model\funcPost.php');
 require_once('model\funcMedia.php');
 
 function displayMedias($idPost)

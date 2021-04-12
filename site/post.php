@@ -5,7 +5,8 @@
  *	Date	:	2021/01/28
  *	Desc.	:	page d'upload de nouevaux post
 */
-require_once('controle\editOrNewPost.php');
+require_once('model/funcDisplay.php');
+require_once('controle/editOrNewPost.php');
 $form = "";
 ?>
 <!DOCTYPE html>
@@ -28,8 +29,8 @@ $form = "";
         <section class="clean-block clean-form dark" style="text-align: left;width: 100%;height: 100%;">
             <div class="container">
                 <div class="block-heading"></div>
-         
-                <form method="POST" action="#" enctype="multipart/form-data">
+                <div class="alert alert-danger alert-dismissible collapse" role="alert" id="form-alert"></div>
+                <form id="formPost" enctype="multipart/form-data">
                     <div class="form-group"><label>Message</label><textarea class="form-control" name="commentaire"></textarea></div>
                     <div class="form-group"> <input type="file" name="fileImg[]" accept=".jpg, .jpeg, .png, .mp4, .mp3, .wav, .gif .mp4 .webm .ogg" multiple /></div> 
                     <hr class="my-4">
@@ -37,8 +38,8 @@ $form = "";
                     // Creer une liste avec tout les medias du post (uniquement visible pour l'edition de post)
                     displayMediasList($id); 
                     ?>
-                    <div class="form-group"><button class="btn btn-primary btn-block" type="submit" name="btnPost" value="SendPost" >Send</button></div>
                 </form>
+                <div class="form-group"><button class="btn btn-primary btn-block" onclick="<?= $ajaxFunction ?>">Send</button></div>
             </div>
         </section>
     </main>
@@ -49,6 +50,7 @@ $form = "";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
     <script src="assets/js/smoothproducts.min.js"></script>
     <script src="assets/js/theme.js"></script>
+    <script src="controle/ajax.js"></script>
 </body>
 
 </html>

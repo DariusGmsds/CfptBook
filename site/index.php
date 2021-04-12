@@ -32,7 +32,7 @@ if ($btnDelete == 'deletePost') {
 
 // redirige vers la page d'édition de post
 if ($btnEdite == 'editPost') {
-    header('Location: contact-us.php?id='.$id);
+    header('Location: post.php?id='.$id);
 }
 
 ?>
